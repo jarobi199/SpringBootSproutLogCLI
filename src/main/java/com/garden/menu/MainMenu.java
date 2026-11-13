@@ -44,6 +44,13 @@ public class MainMenu implements IMenu {
     }
 
     public void printOptions() {
+        System.out.println("[1] Beds");
+        System.out.println("[2] Plants");
+        System.out.println("[3] Species");
+        System.out.println("[4] Care");
+        System.out.println("[5] Harvests");
+        System.out.println("[6] Reports");
+        System.out.println("[7] Alerts");
         System.out.println("[8] Settings");
         System.out.println("[0] Exit");
         System.out.println("Please make a selection:");

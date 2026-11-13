@@ -24,12 +24,21 @@ public class SettingsMenu implements IMenu {
             choice = InputHandler.getIntegerInput();
             switch (choice) {
                 case 1 -> changePassword();
+                case 2 -> setHardinessZone();
                 //case 2 -> setFavoriteStockThreshold();
                 case 6 -> deleteUser();
                 case 8 -> createUser();
             }
         }
         while (choice != 0);
+    }
+
+    public void setHardinessZone() {
+        System.out .println("Enter the hardiness zone value:");
+        int hardinessZone = InputHandler.getIntegerInput();
+        SessionContext.getUser().setHardinessZone(hardinessZone);
+        userService.saveUser(SessionContext.getUser());
+        System.out.println("The hardiness zone has been set to " + hardinessZone + ".");
     }
 
     public void changePassword() {
