@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Bed {
     @Id
     private String id;
+    private String userId;
     private String name;
     private BedType bedType;
     private Sun sunExposure;
@@ -18,7 +19,8 @@ public class Bed {
         //No argument constructor
     }
 
-    public Bed(String name, BedType bedType, Sun sunExposure, int areaSqFt) {
+    public Bed(String userId, String name, BedType bedType, Sun sunExposure, int areaSqFt) {
+        this.userId = userId;
         this.name = name;
         this.bedType = bedType;
         this.sunExposure = sunExposure;
@@ -31,6 +33,14 @@ public class Bed {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getName() {
