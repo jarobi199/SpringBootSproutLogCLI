@@ -24,9 +24,13 @@ public class PerennialSpecies extends Species {
         this.minZone = minZone;
     }
 
+    @Override public boolean isHardyIn(int zone) {
+        return zone >= minZone;
+    }
+
     @Override
     public SpeciesCategory getCategory() {
-        return null;
+        return SpeciesCategory.PERENNIAL;
     }
 
     @Override
