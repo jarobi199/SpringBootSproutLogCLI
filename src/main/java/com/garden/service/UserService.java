@@ -46,6 +46,6 @@ public class UserService {
                          SeasonDay firstFallFrost, int wateringLeadDays, int frostWarningDays, int plantingLeadDays) {
         User user = new User(fullName, username, PasswordEncryptor.encrypt(password), role, hardinessZone,  lastSpringFrost, firstFallFrost, wateringLeadDays, frostWarningDays, plantingLeadDays);
         userRepository.save(user);
-        //speciesSeeder.seed(user);
+        speciesSeeder.seed(user);
     }
 }
