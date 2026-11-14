@@ -25,10 +25,33 @@ public class BedsMenu implements IMenu {
             switch (choice) {
                 case 1 -> listBeds();
                 case 2 -> addBed();
+                case 3 -> viewBedDetail();
+                case 4 -> editBed();
                 case 5 -> deleteBed();
             }
         }
         while (choice != 0);
+    }
+
+    public void editBed() {
+        Bed bed = listBedsAndSelect();
+        if (bed != null) {
+            System.out.println("Enter the new name of the bed:");
+            String bedName = InputHandler.getStringInput();
+            System.out.println("Enter the new sun exposure (SHADE, PART_SUN, FULL_SUN):");
+            Sun sunExposure = Sun.valueOf(InputHandler.getStringInput().toUpperCase());
+            System.out.println("Enter the new area in square feet:");
+            int squareFeet = InputHandler.getIntegerInput();
+
+            bedService.editBed(bed, bedName, sunExposure, squareFeet);
+        }
+    }
+
+    public void viewBedDetail() {
+        Bed bed = listBedsAndSelect();
+        if (bed != null) {
+            bedService.viewBedDetail(bed);
+        }
     }
 
     public void deleteBed() {

@@ -35,20 +35,24 @@ public class BedService {
         List<Bed> beds = bedRepository.findByUserId(SessionContext.getUser().getId());
         System.out.println("| LIST OF BEDS |");
         if (!beds.isEmpty()) {
-            Table bedTable = Clique.table(TableType.BOX_DRAW)
-                    .headers(
-                            "[blue, bold]NAME[/]",
-                            "[blue, bold]TYPE[/]",
-                            "[blue, bold]SUN EXPOSURE[/]",
-                            "[blue, bold]AREA SQUARE FEET[/]"
-                    );
-            beds.forEach(bed -> bedTable.row(bed.getName(), bed.getBedType().name(), bed.getSunExposure().name(), String.valueOf(bed.getAreaSqFt())));
-            bedTable.render();
+           displayBeds(beds);
         }
         else
         {
             System.out.println("There are no beds listed");
         }
+    }
+
+    public void displayBeds(List<Bed> beds) {
+        Table bedTable = Clique.table(TableType.BOX_DRAW)
+                .headers(
+                        "[blue, bold]NAME[/]",
+                        "[blue, bold]TYPE[/]",
+                        "[blue, bold]SUN EXPOSURE[/]",
+                        "[blue, bold]AREA SQUARE FEET[/]"
+                );
+        beds.forEach(bed -> bedTable.row(bed.getName(), bed.getBedType().name(), bed.getSunExposure().name(), String.valueOf(bed.getAreaSqFt())));
+        bedTable.render();
     }
 
 
@@ -62,6 +66,49 @@ public class BedService {
         {
             System.out.println("This bed cannot be deleted since it is being referenced by a plant");
         }
+    }
+
+    public void viewBedDetail(Bed bed) {
+        System.out.println("| BED DETAIL |");
+        displayBeds(List.of(bed));
+        System.out.println();
+
+        List<Plant> plants = plantRepository.findByBedId(bed.getId());
+        if (!plants.isEmpty()) {
+            System.out.println("| PLANTS |");
+            Table plantTable = Clique.table(TableType.BOX_DRAW)
+                    .headers(
+                            "[blue, bold]NAME[/]",
+                            "[blue, bold]SPECIES NAME[/]",
+                            "[blue, bold]STATUS[/]",
+                            "[blue, bold]AREA SQUARE FEET[/]"
+                    );
+            plants.forEach(plant -> plantTable.row(plant.getName(), plant.getSpeciesName(), plant.getStatus().name(), String.valueOf(plant.getSquareFeet())));
+            plantTable.render();
+            System.out.println();
+        }
+        int usedSpace = plants.stream().mapToInt(Plant::getSquareFeet).sum();
+        int freeSpace = bed.getAreaSqFt() - usedSpace;
+        System.out.println("TOTAL USED SPACE: " +  usedSpace);
+        System.out.println("TOTAL FREE SPACE: " +  freeSpace);
+    }
+
+    public void editBed(Bed bed, String bedName, Sun sunExposure, int squareFeet) {
+        if(isSquareFeetAvailable(bed, squareFeet)) {
+            bed.setName(bedName);
+            bed.setSunExposure(sunExposure);
+            bed.setAreaSqFt(squareFeet);
+            bedRepository.save(bed);
+        }
+       else
+       {
+            System.out.println("You cannot edit this bed because the square feet value is invalid!");
+        }
+    }
+
+    public boolean isSquareFeetAvailable(Bed bed, int squareFeet) {
+        int totalUsedSquareFeet = plantRepository.findByBedId(bed.getId()).stream().mapToInt(Plant::getSquareFeet).sum();
+        return squareFeet > totalUsedSquareFeet;
     }
 
 }
