@@ -57,4 +57,22 @@ public class PlantService {
             System.out.println();
         }
     }
+
+    public List<Plant> findPlantsByStatus(PlantStatus plantStatus) {
+        List<Plant> plants = null;
+        if(plantStatus == null) {
+            plants = plantRepository.findByUserId(SessionContext.getUser().getId());
+        }
+        else {
+            plants = plantRepository.findByUserIdAndStatus(SessionContext.getUser().getId(),  plantStatus);
+        }
+
+        return plants;
+    }
+
+    public void markPlanted(Plant plant, LocalDate plantingDate) {
+        plant.setStatus(PlantStatus.GROWING);
+        plant.setLastWatered(plantingDate);
+        plantRepository.save(plant);
+    }
 }

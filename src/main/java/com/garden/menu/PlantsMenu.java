@@ -1,7 +1,9 @@
 package com.garden.menu;
 
+import com.garden.enums.PlantStatus;
 import com.garden.interfaces.IMenu;
 import com.garden.model.Bed;
+import com.garden.model.Plant;
 import com.garden.model.Species;
 import com.garden.service.PlantService;
 import com.garden.util.InputHandler;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Component
 public class PlantsMenu implements IMenu {
@@ -28,9 +31,21 @@ public class PlantsMenu implements IMenu {
             switch (choice) {
                 case 1 -> listPlants();
                 case 2 -> addPlant();
+                case 5 -> markPlanted();
             }
         }
         while (choice != 0);
+    }
+
+    public void markPlanted() {
+        Plant plant = listPlantsAndSelect(PlantStatus.PLANNED);
+        if(plant != null) {
+            System.out.println("Enter the planting date (YYYY-MM-DD):");
+            LocalDate plantingDate = InputHandler.getDateInput();
+
+            plantService.markPlanted(plant, plantingDate);
+            System.out.println("Plant marked successfully!");
+        }
     }
 
     public void listPlants() {
@@ -67,4 +82,27 @@ public class PlantsMenu implements IMenu {
         System.out.println("Please make a selection:");
     }
 
+    public Plant listPlantsAndSelect(PlantStatus status) {
+        int number = 1;
+        Plant plant = null;
+        int choice;
+
+        List<Plant> plants = plantService.findPlantsByStatus(status);
+
+        if(!plants.isEmpty()) {
+            for (Plant p : plants) {
+                System.out.println("[" + number + "] " +  p.getName() + " (" + p.getSpeciesName() + ")");
+                number++;
+            }
+            System.out.println("Select a plant:");
+            choice = InputHandler.getIntegerInput();
+            plant = plants.get(choice - 1);
+        }
+        else
+        {
+            System.out.println("There are no plants available.");
+        }
+
+        return plant;
+    }
 }
