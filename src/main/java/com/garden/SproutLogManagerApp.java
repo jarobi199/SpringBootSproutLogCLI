@@ -13,7 +13,7 @@ public class SproutLogManagerApp implements CommandLineRunner {
     @Autowired
     private MainMenu mainMenu;
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         SpringApplication.run(SproutLogManagerApp.class, args);
     }
 
