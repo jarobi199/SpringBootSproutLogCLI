@@ -1,10 +1,12 @@
 package com.garden.model;
 
 import com.garden.enums.PlantStatus;
+import com.garden.enums.Sun;
+import com.garden.enums.YieldUnit;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Document(collection = "plants")
 public class Plant {
@@ -16,20 +18,22 @@ public class Plant {
     private String speciesName;
     private String name;
     private PlantStatus status;
-    private LocalDateTime plantingDate;
+    private LocalDate plantingDate;
     private int squareFeet;
-    private LocalDateTime lastWatered;
+    private LocalDate lastWatered;
     private int daysToMaturity;
     private int wateringIntervalDays;
     private boolean frostTender;
     private Range expectedYield;
+    private YieldUnit yieldUnit;
+    private Sun sunNeed;
 
     public Plant() {
         //No argument constructor
     }
 
-    public Plant(String userId, String bedId, String speciesId, String speciesName, String name, PlantStatus status, LocalDateTime plantingDate, int squareFeet,
-                 LocalDateTime lastWatered, int daysToMaturity, int wateringIntervalDays, boolean frostTender, Range expectedYield) {
+    public Plant(String userId, String bedId, String speciesId, String speciesName, String name, PlantStatus status, LocalDate plantingDate, int squareFeet,
+                 LocalDate lastWatered, int daysToMaturity, int wateringIntervalDays, boolean frostTender, Range expectedYield, YieldUnit yieldUnit, Sun sunNeed) {
         this.userId = userId;
         this.bedId = bedId;
         this.speciesId = speciesId;
@@ -43,6 +47,8 @@ public class Plant {
         this.wateringIntervalDays = wateringIntervalDays;
         this.frostTender = frostTender;
         this.expectedYield = expectedYield;
+        this.yieldUnit = yieldUnit;
+        this.sunNeed = sunNeed;
     }
 
     public String getId() {
@@ -101,11 +107,11 @@ public class Plant {
         this.status = status;
     }
 
-    public LocalDateTime getPlantingDate() {
+    public LocalDate getPlantingDate() {
         return plantingDate;
     }
 
-    public void setPlantingDate(LocalDateTime plantingDate) {
+    public void setPlantingDate(LocalDate plantingDate) {
         this.plantingDate = plantingDate;
     }
 
@@ -117,11 +123,11 @@ public class Plant {
         this.squareFeet = squareFeet;
     }
 
-    public LocalDateTime getLastWatered() {
+    public LocalDate getLastWatered() {
         return lastWatered;
     }
 
-    public void setLastWatered(LocalDateTime lastWatered) {
+    public void setLastWatered(LocalDate lastWatered) {
         this.lastWatered = lastWatered;
     }
 
@@ -155,5 +161,21 @@ public class Plant {
 
     public void setExpectedYield(Range expectedYield) {
         this.expectedYield = expectedYield;
+    }
+
+    public YieldUnit getYieldUnit() {
+        return yieldUnit;
+    }
+
+    public void setYieldUnit(YieldUnit yieldUnit) {
+        this.yieldUnit = yieldUnit;
+    }
+
+    public Sun getSunNeed() {
+        return sunNeed;
+    }
+
+    public void setSunNeed(Sun sunNeed) {
+        this.sunNeed = sunNeed;
     }
 }

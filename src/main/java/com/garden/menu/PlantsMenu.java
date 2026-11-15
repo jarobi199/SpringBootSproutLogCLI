@@ -1,15 +1,23 @@
 package com.garden.menu;
 
 import com.garden.interfaces.IMenu;
+import com.garden.model.Bed;
+import com.garden.model.Species;
 import com.garden.service.PlantService;
 import com.garden.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class PlantsMenu implements IMenu {
     @Autowired
     private PlantService plantService;
+    @Autowired
+    private BedsMenu bedsMenu;
+    @Autowired
+    private SpeciesMenu speciesMenu;
 
     @Override
     public void show() {
@@ -18,11 +26,32 @@ public class PlantsMenu implements IMenu {
             printOptions();
             choice = InputHandler.getIntegerInput();
             switch (choice) {
-
+                case 1 -> listPlants();
+                case 2 -> addPlant();
             }
         }
         while (choice != 0);
     }
+
+    public void listPlants() {
+        plantService.listPlants();
+    }
+
+    public void addPlant() {
+        Bed bed = bedsMenu.listBedsAndSelect();
+        Species species = speciesMenu.listSpeciesAndSelect();
+
+        System.out.println("Enter the name of the plant:");
+        String plantName = InputHandler.getStringInput();
+        System.out.println("Enter the square feet of the plant:");
+        int squareFeet = InputHandler.getIntegerInput();
+        System.out.println("Enter the planting date (YYYY-MM-DD):");
+        LocalDate plantingDate = InputHandler.getDateInput();
+
+        plantService.addPlant(bed, species, plantName, squareFeet, plantingDate);
+        System.out.println("The plant has been added successfully!");
+    }
+
 
     public void printOptions() {
         System.out.println();
@@ -37,29 +66,5 @@ public class PlantsMenu implements IMenu {
         System.out.println("[0] Exit");
         System.out.println("Please make a selection:");
     }
-
-/*    public Bed listPlantsAndSelect() {
-        int number = 1;
-        Bed bed = null;
-        int choice;
-
-        List<Bed> beds = bedService.getAllBeds();
-
-        if(!beds.isEmpty()) {
-            for (Bed b : beds) {
-                System.out.println("[" + number + "] " +  b.getName() + " (" + b.getBedType() + ")");
-                number++;
-            }
-            System.out.println("Select a bottle:");
-            choice = InputHandler.getIntegerInput();
-            bed = beds.get(choice - 1);
-        }
-        else
-        {
-            System.out.println("There are no beds available.");
-        }
-
-        return bed;
-    }*/
 
 }

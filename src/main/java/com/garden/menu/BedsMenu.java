@@ -106,7 +106,7 @@ public class BedsMenu implements IMenu {
                 System.out.println("[" + number + "] " +  b.getName() + " (" + b.getBedType() + ")");
                 number++;
             }
-            System.out.println("Select a bottle:");
+            System.out.println("Select a bed:");
             choice = InputHandler.getIntegerInput();
             bed = beds.get(choice - 1);
         }
