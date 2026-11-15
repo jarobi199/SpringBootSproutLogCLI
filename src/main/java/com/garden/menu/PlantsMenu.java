@@ -32,9 +32,31 @@ public class PlantsMenu implements IMenu {
                 case 1 -> listPlants();
                 case 2 -> addPlant();
                 case 5 -> markPlanted();
+                case 6 -> movePlant();
+                case 7 -> finishPlant();
             }
         }
         while (choice != 0);
+    }
+
+    public void movePlant() {
+        Plant plant = listPlantsAndSelect(null);
+        Bed bed = bedsMenu.listBedsAndSelect();
+
+        if((bed !=null) && (plant != null)) {
+            plantService.movePlant(plant, bed);
+        }
+    }
+
+    public void finishPlant() {
+        Plant plant = listPlantsAndSelect(null);
+        System.out.println("Are you sure that you want to mark this plant as finished (Y/N)?:");
+        boolean marked = InputHandler.getBooleanInput();
+
+        if ((plant != null) && (marked)) {
+            plantService.finishPlant(plant);
+            System.out.println("The plant has been marked as finished!");
+        }
     }
 
     public void markPlanted() {

@@ -23,6 +23,8 @@ public class PlantService {
     private PlantRepository plantRepository;
     @Autowired
     private BedRepository bedRepository;
+    @Autowired
+    private BedService bedService;
 
     public void addPlant(Bed bed, Species species, String name, int squareFeet, LocalDate plantingDate) {
 
@@ -75,4 +77,21 @@ public class PlantService {
         plant.setLastWatered(plantingDate);
         plantRepository.save(plant);
     }
+
+    public void finishPlant(Plant plant) {
+        plant.setStatus(PlantStatus.FINISHED);
+        plantRepository.save(plant);
+    }
+
+    public void movePlant(Plant plant, Bed bed) {
+        if(bedService.isSquareFeetAvailable(bed, plant.getSquareFeet())) {
+            plant.setBedId(bed.getId());
+            plantRepository.save(plant);
+            System.out.println("This plant has been successfully moved to " + bed.getName() + ".");
+        }
+        else {
+            System.out.println("This plant could not be moved to " + bed.getName() + " because there is not enough room.");
+        }
+    }
+
 }
