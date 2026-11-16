@@ -27,7 +27,7 @@ public class MainMenu implements IMenu {
         displayTitle();
         System.out.println();
 
-        authenticateMenu.show();
+        authenticateMenu.automaticLogin();
         System.out.println();
 
         if(SessionContext.isAuthenticated()) {

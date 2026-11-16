@@ -50,7 +50,7 @@ public class AuthenticateMenu implements IMenu {
     }
 
     public void automaticLogin() {
-        authenticationService.authenticate("kanto", "password");
+        authenticationService.authenticate("dstucky", "password");
     }
 
 }
