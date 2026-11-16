@@ -179,6 +179,10 @@ public class Plant {
         this.sunNeed = sunNeed;
     }
 
+    public LocalDate getNextWateringDate() {
+        return lastWatered.plusDays(wateringIntervalDays);
+    }
+
     public String getDetails() {
         return
                 "Species Name: " + speciesName + "\n" +
@@ -192,7 +196,8 @@ public class Plant {
                         "Frost Tender: " + frostTender + "\n" +
                         "Expected Yield: " + expectedYield + "\n" +
                         "Yield Unit: " + yieldUnit + "\n" +
-                        "Sun Need: " + sunNeed;
+                        "Sun Need: " + sunNeed + "\n" +
+                        "Next Watering Date: " + getNextWateringDate();
     }
 
 }

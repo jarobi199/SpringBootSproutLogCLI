@@ -99,8 +99,15 @@ public class PlantService {
         //	All fields, the planting window for its planting year (read from the species),
         //	next watering date, season yield so far against the expected range,
         //	and the five most recent tasks.
-
         System.out.println(plant.getDetails());
+        System.out.println("Season Yield: " + getSeasonYield(plant) + " " + plant.getYieldUnit());
+
+        //TODO: Add tasks here
+    }
+
+    private int getSeasonYield(Plant plant) {
+        //TODO: Add code for yield here
+        return 0;
     }
 
 
