@@ -2,9 +2,7 @@ package com.garden.menu;
 
 import com.garden.enums.PlantStatus;
 import com.garden.interfaces.IMenu;
-import com.garden.model.Bed;
-import com.garden.model.Plant;
-import com.garden.model.Species;
+import com.garden.model.*;
 import com.garden.service.PlantService;
 import com.garden.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +48,14 @@ public class PlantsMenu implements IMenu {
             int squareFeet = InputHandler.getIntegerInput();
             System.out.println("Enter the new water interval days:");
             int waterInterval = InputHandler.getIntegerInput();
+            System.out.println("Enter the new expected yield separated by a comma (example: 5,10):");
+            List<String> expectedYieldInputs = List.of(InputHandler.getStringInput().split(","));
+            Range expectedYield = new Range(Integer.parseInt(expectedYieldInputs.getFirst()), Integer.parseInt(expectedYieldInputs.get(1)));
+            System.out.println("Enter the days to maturity:");
+            int daysToMaturity = InputHandler.getIntegerInput();
+
+            plantService.editPlant(plant, plantName, squareFeet, waterInterval, expectedYield, daysToMaturity);
+            System.out.println("The plant has been edited successfully!");
         }
     }
 

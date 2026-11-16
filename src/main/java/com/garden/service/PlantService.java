@@ -4,6 +4,7 @@ import com.garden.authentication.SessionContext;
 import com.garden.enums.PlantStatus;
 import com.garden.model.Bed;
 import com.garden.model.Plant;
+import com.garden.model.Range;
 import com.garden.model.Species;
 import com.garden.repository.BedRepository;
 import com.garden.repository.PlantRepository;
@@ -61,7 +62,7 @@ public class PlantService {
     }
 
     public List<Plant> findPlantsByStatus(PlantStatus plantStatus) {
-        List<Plant> plants = null;
+        List<Plant> plants;
         if(plantStatus == null) {
             plants = plantRepository.findByUserId(SessionContext.getUser().getId());
         }
@@ -98,8 +99,17 @@ public class PlantService {
         //	All fields, the planting window for its planting year (read from the species),
         //	next watering date, season yield so far against the expected range,
         //	and the five most recent tasks.
-        //TODO: ADD CODE HERE
+
+        System.out.println(plant.getDetails());
     }
 
 
+    public void editPlant(Plant plant, String plantName, int squareFeet, int waterInterval, Range expectedYield, int daysToMaturity) {
+        plant.setName(plantName);
+        plant.setSquareFeet(squareFeet);
+        plant.setWateringIntervalDays(waterInterval);
+        plant.setExpectedYield(expectedYield);
+        plant.setDaysToMaturity(daysToMaturity);
+        plantRepository.save(plant);
+    }
 }

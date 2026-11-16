@@ -178,4 +178,21 @@ public class Plant {
     public void setSunNeed(Sun sunNeed) {
         this.sunNeed = sunNeed;
     }
+
+    public String getDetails() {
+        return
+                "Species Name: " + speciesName + "\n" +
+                        "Name: " + name + "\n" +
+                        "Status: " + status + "\n" +
+                        "Planting Date: " + plantingDate + "\n" +
+                        "Square Feet: " + squareFeet + "\n" +
+                        "Last Watered: " + lastWatered + "\n" +
+                        "Days to Maturity: " + daysToMaturity + "\n" +
+                        "Watering Interval Days: " + wateringIntervalDays + "\n" +
+                        "Frost Tender: " + frostTender + "\n" +
+                        "Expected Yield: " + expectedYield + "\n" +
+                        "Yield Unit: " + yieldUnit + "\n" +
+                        "Sun Need: " + sunNeed;
+    }
+
 }

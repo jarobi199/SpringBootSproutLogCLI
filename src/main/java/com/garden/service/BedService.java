@@ -6,6 +6,7 @@ import com.garden.enums.Sun;
 import com.garden.model.Bed;
 import com.garden.model.Plant;
 import com.garden.repository.BedRepository;
+import com.garden.repository.PlantRepository;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.components.Table;
 import io.github.kusoroadeolu.clique.configuration.TableType;
@@ -19,7 +20,7 @@ public class BedService {
     @Autowired
     private BedRepository bedRepository;
     @Autowired
-    private PlantService plantService;
+    private PlantRepository plantRepository;
 
     public void addBed(String bedName, BedType bedType, Sun sunExposure, int squareFeet) {
         Bed bed = new Bed(SessionContext.getUser().getId(), bedName, bedType, sunExposure, squareFeet);
@@ -56,7 +57,7 @@ public class BedService {
 
 
     public void deleteBed(Bed bed) {
-        List<Plant> plants = plantService.findPlantsByBedId(bed.getId());
+        List<Plant> plants = plantRepository.findByBedId(bed.getId());
         if (plants.isEmpty()) {
             bedRepository.delete(bed);
             System.out.println("The bed has been successfully deleted!");
@@ -72,7 +73,7 @@ public class BedService {
         displayBeds(List.of(bed));
         System.out.println();
 
-        List<Plant> plants = plantService.findPlantsByBedId(bed.getId());
+        List<Plant> plants = plantRepository.findByBedId(bed.getId());
         if (!plants.isEmpty()) {
             System.out.println("| PLANTS |");
             Table plantTable = Clique.table(TableType.BOX_DRAW)
@@ -116,7 +117,7 @@ public class BedService {
     }
 
     public int squareFeetUsed(Bed bed) {
-        return plantService.findPlantsByBedId(bed.getId()).stream().mapToInt(Plant::getSquareFeet).sum();
+        return plantRepository.findByBedId(bed.getId()).stream().mapToInt(Plant::getSquareFeet).sum();
     }
 
     public void warnIfCrowded(Bed bed, int squareFeet) {

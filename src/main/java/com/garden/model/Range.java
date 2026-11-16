@@ -32,4 +32,8 @@ public record Range(int min, int max){
         return min <= o.min && max >= o.max;
     }
 
+    @Override
+    public String toString() {
+        return "(" + min + " - " + max + ")";
+    }
 }
