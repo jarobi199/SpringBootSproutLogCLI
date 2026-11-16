@@ -119,4 +119,20 @@ public class PlantService {
         plant.setDaysToMaturity(daysToMaturity);
         plantRepository.save(plant);
     }
+
+    public void deletePlant(Plant plant) {
+        //TODO: Check if it has no tasks or harvests
+        if(validDelete(plant)) {
+            plantRepository.delete(plant);
+        }
+        else
+        {
+            System.out.println("This plant could not be deleted.");
+        }
+    }
+
+    private boolean validDelete(Plant plant) {
+        return true;
+    }
+
 }

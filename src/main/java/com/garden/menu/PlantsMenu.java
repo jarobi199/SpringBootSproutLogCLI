@@ -34,9 +34,20 @@ public class PlantsMenu implements IMenu {
                 case 5 -> markPlanted();
                 case 6 -> movePlant();
                 case 7 -> finishPlant();
+                case 8 -> deletePlant();
             }
         }
         while (choice != 0);
+    }
+
+    public void deletePlant() {
+        Plant plant = listPlantsAndSelect(null);
+        System.out.println("Are you sure that you want to mark this plant as finished (Y/N)?:");
+        boolean marked = InputHandler.getBooleanInput();
+
+        if ((plant != null) && (marked)) {
+            plantService.deletePlant(plant);
+        }
     }
 
     public void editPlant() {
