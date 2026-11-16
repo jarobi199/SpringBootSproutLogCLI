@@ -94,4 +94,12 @@ public class PlantService {
         }
     }
 
+    public void viewPlantDetail(Plant plant) {
+        //	All fields, the planting window for its planting year (read from the species),
+        //	next watering date, season yield so far against the expected range,
+        //	and the five most recent tasks.
+        //TODO: ADD CODE HERE
+    }
+
+
 }

@@ -31,12 +31,31 @@ public class PlantsMenu implements IMenu {
             switch (choice) {
                 case 1 -> listPlants();
                 case 2 -> addPlant();
+                case 3 -> viewPlantDetail();
+                case 4 -> editPlant();
                 case 5 -> markPlanted();
                 case 6 -> movePlant();
                 case 7 -> finishPlant();
             }
         }
         while (choice != 0);
+    }
+
+    public void editPlant() {
+        Plant plant = listPlantsAndSelect(null);
+        if (plant != null) {
+            System.out.println("Enter the new name of the plant:");
+            String plantName = InputHandler.getStringInput();
+            System.out.println("Enter the new square feet of the plant:");
+            int squareFeet = InputHandler.getIntegerInput();
+            System.out.println("Enter the new water interval days:");
+            int waterInterval = InputHandler.getIntegerInput();
+        }
+    }
+
+    public void viewPlantDetail() {
+        Plant plant = listPlantsAndSelect(null);
+        plantService.viewPlantDetail(plant);
     }
 
     public void movePlant() {
