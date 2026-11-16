@@ -24,7 +24,8 @@ public class PerennialSpecies extends Species {
         this.minZone = minZone;
     }
 
-    @Override public boolean isHardyIn(int zone) {
+    @Override
+    public boolean isHardyIn(int zone) {
         return zone >= minZone;
     }
 
