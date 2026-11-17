@@ -41,12 +41,15 @@ public class HarvestService {
     }
 
     public void historyByPlant() {
-        Map<String, List<Harvest>> harvestMap =harvestRepository.findByUserId(SessionContext.getUser().getId()).stream()
-                .sorted(Comparator.comparing(Harvest::getDate).reversed())
+        Map<String, List<Harvest>> harvestMap = harvestRepository.findByUserId(SessionContext.getUser().getId()).stream()
+                .sorted(Comparator.comparing(Harvest::getDate))
                 .collect(Collectors.groupingBy(Harvest::getPlantId));
 
         for (Map.Entry<String, List<Harvest>> entry : harvestMap.entrySet()) {
             Plant plant = plantRepository.findById(entry.getKey()).orElse(null);
+            if (plant != null) {
+
+            }
         }
     }
 }
