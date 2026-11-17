@@ -24,8 +24,7 @@ public class Harvest {
         //No argument constructor
     }
 
-    public Harvest(String id, String userId, String plantId, String plantName, String bedName, String speciesName, LocalDate date, int quantity, YieldUnit yieldUnit, String notes) {
-        this.id = id;
+    public Harvest(String userId, String plantId, String plantName, String bedName, String speciesName, LocalDate date, int quantity, YieldUnit yieldUnit, String notes) {
         this.userId = userId;
         this.plantId = plantId;
         this.plantName = plantName;
