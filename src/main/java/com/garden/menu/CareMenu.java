@@ -5,6 +5,7 @@ import com.garden.enums.TaskType;
 import com.garden.interfaces.IMenu;
 import com.garden.model.Harvest;
 import com.garden.model.Plant;
+import com.garden.model.Task;
 import com.garden.service.TaskService;
 import com.garden.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,22 @@ public class CareMenu implements IMenu {
                 case 1 -> logTask();
                 case 2 -> historyByPlant();
                 case 3 -> careSchedule();
+                case 4 -> deleteTask();
             }
         }
         while (choice != 0);
+    }
+
+    public void deleteTask() {
+        Task task = listTasksAndSelect();
+        if (task != null) {
+            System.out.println("Are you sure you want to delete this task? (Y/N):");
+            boolean answer = InputHandler.getBooleanInput();
+            if(answer) {
+                taskService.deleteTask(task);
+                System.out.println("The task has been successfully deleted!");
+            }
+        }
     }
 
     public void careSchedule() {
@@ -71,27 +85,27 @@ public class CareMenu implements IMenu {
         System.out.println("Please make a selection:");
     }
 
-    /*public Harvest listHarvestAndSelect() {
+    public Task listTasksAndSelect() {
         int number = 1;
-        Harvest harvest = null;
+        Task task = null;
         int choice;
 
-        List<Harvest> harvests = harvestService.findAllHarvests();
+        List<Task> tasks = taskService.findAllTasks();
 
-        if(!harvests.isEmpty()) {
-            for (Harvest h : harvests) {
-                System.out.println("[" + number + "] " +  h.getPlantName() + " (" + h.getSpeciesName() + ")");
+        if(!tasks.isEmpty()) {
+            for (Task t : tasks) {
+                System.out.println("[" + number + "] " +  t.getNotes()+ " (" + t.getPlantName() + " - " + t.getDate() + " )");
                 number++;
             }
-            System.out.println("Select a harvest:");
+            System.out.println("Select a task:");
             choice = InputHandler.getIntegerInput();
-            harvest = harvests.get(choice - 1);
+            task = tasks.get(choice - 1);
         }
         else
         {
-            System.out.println("There are no harvests available.");
+            System.out.println("There are no tasks available.");
         }
 
-        return harvest;
-    }*/
+        return task;
+    }
 }

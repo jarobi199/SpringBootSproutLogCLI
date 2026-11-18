@@ -1,5 +1,6 @@
 package com.garden.service;
 
+import com.garden.alert.AlertManager;
 import com.garden.authentication.SessionContext;
 import com.garden.enums.PlantStatus;
 import com.garden.enums.TaskType;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -74,10 +76,26 @@ public class TaskService {
                             "[blue, bold]NEXT WATERING DATE[/]",
                             "[blue, bold]DAYS UNTIL DUE/OVERDUE[/]"
                     );
+            plants.forEach(plant -> {
+                LocalDate nextWateringDate = plant.getNextWateringDate();
+                long daysUntilDue = LocalDate.now().until(nextWateringDate, ChronoUnit.DAYS);
+                String daysUntilDueString = (daysUntilDue < 0) ? AlertManager.showWarning(String.valueOf(daysUntilDue)) : String.valueOf(daysUntilDue);
+                plantTable.row(plant.getName(), plant.getSpeciesName(),
+                        plant.getNextWateringDate().toString(), daysUntilDueString);
+            });
+
             plants.forEach(plant -> plantTable.row(plant.getName(), plant.getSpeciesName(),
                     plant.getNextWateringDate().toString(), ""));
             plantTable.render();
         }
+
     }
 
+    public List<Task> findAllTasks() {
+        return taskRepository.findByUserId(SessionContext.getUser().getId());
+    }
+
+    public void deleteTask(Task task) {
+        taskRepository.delete(task);
+    }
 }

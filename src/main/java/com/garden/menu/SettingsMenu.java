@@ -115,8 +115,8 @@ public class SettingsMenu implements IMenu {
             System.out.println("Enter the username of the user that you want to delete:");
             String username = InputHandler.getStringInput();
             System.out.println("Are you sure you want to delete this user? (Y/N):");
-            String answer = InputHandler.getStringInput();
-            if("Y".equalsIgnoreCase(answer)) {
+            boolean answer = InputHandler.getBooleanInput();
+            if(answer) {
                 userService.deleteUser(username);
             }
         }
