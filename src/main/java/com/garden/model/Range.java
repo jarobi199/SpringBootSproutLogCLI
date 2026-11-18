@@ -32,6 +32,23 @@ public record Range(int min, int max){
         return min <= o.min && max >= o.max;
     }
 
+    public String getPositionDisplay(int v) {
+
+        String position = null;
+
+        if(isBelowRange(v)) {
+            position = "BELOW RANGE";
+        }
+        else if(isAboveRange(v)) {
+            position = "ABOVE RANGE";
+        }
+        else if(contains(v)) {
+            position = "WITHIN RANGE";
+        }
+
+        return position;
+    }
+
     @Override
     public String toString() {
         return "(" + min + " - " + max + ")";

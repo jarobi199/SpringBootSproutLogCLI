@@ -38,33 +38,31 @@ public class HarvestService {
     }
 
     public void historyByPlant(Plant plant) {
-    List<Harvest> harvests =harvestRepository.findByPlantId(plant.getId());
-    System.out.println("PLANT NAME: " + plant.getName());
-    System.out.println("PLANT SPECIES: " + plant.getSpeciesName());
-    System.out.println();
-    System.out.println("| HARVESTS |");
-    if (!harvests.isEmpty()) {
-        Table harvestTable = Clique.table(TableType.BOX_DRAW)
-                .headers(
-                        "[blue, bold]BED NAME[/]",
-                        "[blue, bold]DATE[/]",
-                        "[blue, bold]QUANTITY[/]",
-                        "[blue, bold]NOTES[/]"
-
-                );
-        harvests.forEach(harvest -> {
-            harvestTable.row(harvest.getBedName(), harvest.getDate().toString(), harvest.getQuantity() + " " +  harvest.getYieldUnit(), harvest.getNotes());
-        });
-        harvestTable.render();
-        int seasonTotal = harvests.stream().mapToInt(Harvest::getQuantity).sum();
-        System.out.println("HARVEST SEASON TOTAL: " + seasonTotal);
+        List<Harvest> harvests = harvestRepository.findByPlantId(plant.getId());
+        System.out.println("PLANT NAME: " + plant.getName());
+        System.out.println("PLANT SPECIES: " + plant.getSpeciesName());
         System.out.println();
-    }
-    else
-    {
-        System.out.println("There are no harvests found.");
-    }
+        System.out.println("| HARVESTS |");
+        if (!harvests.isEmpty()) {
+            Table harvestTable = Clique.table(TableType.BOX_DRAW)
+                    .headers(
+                            "[blue, bold]BED NAME[/]",
+                            "[blue, bold]DATE[/]",
+                            "[blue, bold]QUANTITY[/]",
+                            "[blue, bold]NOTES[/]"
 
-
+                    );
+            harvests.forEach(harvest -> {
+                harvestTable.row(harvest.getBedName(), harvest.getDate().toString(), harvest.getQuantity() + " " + harvest.getYieldUnit(), harvest.getNotes());
+            });
+            harvestTable.render();
+            int seasonTotal = harvests.stream().mapToInt(Harvest::getQuantity).sum();
+            System.out.println("HARVEST SEASON TOTAL: " + seasonTotal + " " + plant.getExpectedYield().getPositionDisplay(seasonTotal) + " " + plant.getExpectedYield());
+            System.out.println();
+        }
+        else
+        {
+            System.out.println("There are no harvests found.");
+        }
     }
 }
