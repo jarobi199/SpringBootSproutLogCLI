@@ -35,7 +35,11 @@ public class HarvestMenu implements IMenu {
     }
 
     public void historyByPlant() {
-        harvestService.historyByPlant();
+        Plant plant = plantsMenu.listPlantsAndSelect(null);
+        if (plant != null) {
+            harvestService.historyByPlant(plant);
+        }
+
     }
 
     public void deleteHarvest() {
