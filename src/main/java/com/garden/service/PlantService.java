@@ -4,6 +4,7 @@ import com.garden.authentication.SessionContext;
 import com.garden.enums.PlantStatus;
 import com.garden.model.*;
 import com.garden.repository.BedRepository;
+import com.garden.repository.HarvestRepository;
 import com.garden.repository.PlantRepository;
 import com.garden.repository.SpeciesRepository;
 import io.github.kusoroadeolu.clique.Clique;
@@ -24,6 +25,8 @@ public class PlantService {
     private BedRepository bedRepository;
     @Autowired
     private SpeciesRepository speciesRepository;
+    @Autowired
+    private HarvestRepository harvestRepository;
     @Autowired
     private BedService bedService;
     @Autowired
@@ -117,8 +120,8 @@ public class PlantService {
     }
 
     private int getSeasonYield(Plant plant) {
-        //TODO: Add code for yield here
-        return 0;
+        int currentYear = LocalDate.now().getYear();
+        return harvestRepository.findByPlantId(plant.getId()).stream().filter(harvest -> harvest.getDate().getYear() == currentYear).mapToInt(Harvest::getQuantity).sum();
     }
 
 
@@ -132,7 +135,6 @@ public class PlantService {
     }
 
     public void deletePlant(Plant plant) {
-        //TODO: Check if it has no tasks or harvests
         if(validDelete(plant)) {
             plantRepository.delete(plant);
         }
@@ -143,8 +145,10 @@ public class PlantService {
     }
 
     private boolean validDelete(Plant plant) {
-        //TODO: Add code here
-        return true;
+        int taskCount = taskService.findAllTasksByPlant(plant).size();
+        int harvestCount = harvestRepository.findByPlantId(plant.getId()).size();
+
+        return (harvestCount == 0) &&  (taskCount == 0);
     }
 
 }

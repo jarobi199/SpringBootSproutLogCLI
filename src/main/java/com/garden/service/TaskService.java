@@ -30,8 +30,6 @@ public class TaskService {
     private PlantRepository plantRepository;
     @Autowired
     private BedRepository bedRepository;
-    @Autowired
-    private PlantService plantService;
 
     public void logTask(Plant plant, TaskType taskType, LocalDate date, String notes) {
         Optional<Bed> optionalBed = bedRepository.findById(plant.getBedId());
