@@ -2,12 +2,10 @@ package com.garden.service;
 
 import com.garden.authentication.SessionContext;
 import com.garden.enums.PlantStatus;
-import com.garden.model.Bed;
-import com.garden.model.Plant;
-import com.garden.model.Range;
-import com.garden.model.Species;
+import com.garden.model.*;
 import com.garden.repository.BedRepository;
 import com.garden.repository.PlantRepository;
+import com.garden.repository.SpeciesRepository;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.components.Table;
 import io.github.kusoroadeolu.clique.configuration.TableType;
@@ -25,7 +23,11 @@ public class PlantService {
     @Autowired
     private BedRepository bedRepository;
     @Autowired
+    private SpeciesRepository speciesRepository;
+    @Autowired
     private BedService bedService;
+    @Autowired
+    private TaskService taskService;
 
     public void addPlant(Bed bed, Species species, String name, int squareFeet, LocalDate plantingDate) {
 
@@ -96,13 +98,22 @@ public class PlantService {
     }
 
     public void viewPlantDetail(Plant plant) {
-        //	All fields, the planting window for its planting year (read from the species),
-        //	next watering date, season yield so far against the expected range,
-        //	and the five most recent tasks.
+        Species species = speciesRepository.findById(plant.getSpeciesId()).orElse(null);
         System.out.println(plant.getDetails());
         System.out.println("Season Yield: " + getSeasonYield(plant) + " " + plant.getYieldUnit());
+        if (species != null) {
+            System.out.println("Planting Window: " + species.plantingWindow(SessionContext.getUser(), plant.getPlantingDate().getYear()).opens()
+                    + " - " + species.plantingWindow(SessionContext.getUser(), plant.getPlantingDate().getYear()).closes());
+        }
 
-        //TODO: Add tasks here
+        List<Task> tasks = taskService.findAllTasksByPlant(plant);
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks found");
+        }
+        else
+        {
+           taskService.displayAllTasks(tasks);
+        }
     }
 
     private int getSeasonYield(Plant plant) {
@@ -132,6 +143,7 @@ public class PlantService {
     }
 
     private boolean validDelete(Plant plant) {
+        //TODO: Add code here
         return true;
     }
 

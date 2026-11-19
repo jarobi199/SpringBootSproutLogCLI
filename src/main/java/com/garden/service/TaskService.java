@@ -48,20 +48,23 @@ public class TaskService {
     public void historyByPlant(Plant plant) {
         List<Task> tasks = taskRepository.findByPlantIdOrderByDateDesc(plant.getId());
         if(!tasks.isEmpty()) {
-            System.out.println("| LIST OF TASKS |");
-            Table taskTable = Clique.table(TableType.BOX_DRAW)
-                    .headers(
-                            "[blue, bold]PLANT NAME[/]",
-                            "[blue, bold]BED NAME[/]",
-                            "[blue, bold]TYPE[/]",
-                            "[blue, bold]DATE[/]",
-                            "[blue, bold]NOTES[/]"
-                    );
-            tasks.forEach(task -> taskTable.row(task.getPlantName(), task.getBedName(), task.getType().toString(), task.getDate().toString(), task.getNotes()));
-            taskTable.render();
-            System.out.println();
+          displayAllTasks(tasks);
         }
+    }
 
+    public void displayAllTasks(List<Task> tasks ) {
+        System.out.println("| LIST OF TASKS |");
+        Table taskTable = Clique.table(TableType.BOX_DRAW)
+                .headers(
+                        "[blue, bold]PLANT NAME[/]",
+                        "[blue, bold]BED NAME[/]",
+                        "[blue, bold]TYPE[/]",
+                        "[blue, bold]DATE[/]",
+                        "[blue, bold]NOTES[/]"
+                );
+        tasks.forEach(task -> taskTable.row(task.getPlantName(), task.getBedName(), task.getType().toString(), task.getDate().toString(), task.getNotes()));
+        taskTable.render();
+        System.out.println();
     }
 
     public void displayCareSchedule() {
@@ -97,5 +100,9 @@ public class TaskService {
 
     public void deleteTask(Task task) {
         taskRepository.delete(task);
+    }
+
+    public List<Task> findAllTasksByPlant(Plant plant) {
+        return taskRepository.findByPlantIdOrderByDateDesc(plant.getId());
     }
 }
