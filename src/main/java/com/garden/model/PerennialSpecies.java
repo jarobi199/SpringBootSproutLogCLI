@@ -3,12 +3,17 @@ package com.garden.model;
 import com.garden.enums.SpeciesCategory;
 import com.garden.enums.Sun;
 import com.garden.enums.YieldUnit;
+import com.garden.interfaces.PlantingWindowStrategy;
+import com.garden.planting.PerennialWindowStrategy;
+import org.springframework.data.annotation.Transient;
 
 public class PerennialSpecies extends Species {
     private int minZone;
+    @Transient
+    private PlantingWindowStrategy<PerennialSpecies> plantingWindowStrategy;
 
     public PerennialSpecies() {
-        //No argument constructor
+        this.plantingWindowStrategy = new PerennialWindowStrategy();
     }
 
     public PerennialSpecies(String userId, String name, Sun sunNeed, int daysToMaturity, int wateringIntervalDays, boolean frostTender, Range windowOffsets, Range expectedYield, YieldUnit yieldUnit, int minZone) {
@@ -36,6 +41,6 @@ public class PerennialSpecies extends Species {
 
     @Override
     public PlantingWindow plantingWindow(User user, int year) {
-        return null;
+        return plantingWindowStrategy.window(this, user, year);
     }
 }
