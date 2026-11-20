@@ -1,37 +1,44 @@
 package com.garden.alert;
 
+import com.garden.enums.AlertSeverity;
+import com.garden.enums.AlertType;
+import com.garden.enums.PlantStatus;
+import com.garden.interfaces.AlertStrategy;
+import com.garden.model.Plant;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class WateringDueStrategy implements AlertStrategy {
 
-    private final int criticalOverdueDays;
-
-    public WateringDueStrategy(
-            @Value("${sproutlog.watering-critical-overdue-days}") int criticalOverdueDays) {
-        this.criticalOverdueDays = criticalOverdueDays;
-    }
+    @Value("${sproutlog.watering-critical-overdue-days}")
+    private int criticalOverdueDays;
 
     @Override
     public List<AlertResult> evaluate(AlertContext ctx) {
         LocalDate today = LocalDate.now();
-        int leadDays = ctx.getUser().getWateringLeadDays();
+        int leadDays = ctx.user().getWateringLeadDays();
         List<AlertResult> results = new ArrayList<>();
 
-        for (Plant plant : ctx.getPlants()) {
-            if (plant.getStatus() != PlantStatus.GROWING) continue;
+        for (Plant plant : ctx.plants()) {
+            if (plant.getStatus().equals(PlantStatus.GROWING)) {
+                LocalDate due = plant.getLastWatered().plusDays(plant.getWateringIntervalDays());
+                long daysUntilDue = ChronoUnit.DAYS.between(today, due);
+                if (daysUntilDue < leadDays) {
+                    long overdue = -daysUntilDue;
+                    AlertSeverity severity = (daysUntilDue < 0 && overdue >= criticalOverdueDays)
+                            ? AlertSeverity.CRITICAL : AlertSeverity.WARNING;
 
-            LocalDate due = plant.getLastWatered().plusDays(plant.getWateringIntervalDays());
-            long daysUntilDue = ChronoUnit.DAYS.between(today, due);
-            if (daysUntilDue > leadDays) continue;
-
-            long overdue = -daysUntilDue;
-            AlertSeverity severity = (daysUntilDue < 0 && overdue >= criticalOverdueDays)
-                    ? AlertSeverity.CRITICAL : AlertSeverity.WARNING;
-
-            results.add(new AlertResult(plant.getName(), AlertType.WATERING_DUE,
-                    severity, message(daysUntilDue)));
+                    results.add(new AlertResult(plant.getName(), AlertType.WATERING_DUE, severity, message(daysUntilDue)));
+                }
+            }
         }
+
         return results;
     }
 
