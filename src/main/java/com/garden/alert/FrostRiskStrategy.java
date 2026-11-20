@@ -1,5 +1,8 @@
 package com.garden.alert;
 
+import com.garden.enums.AlertSeverity;
+import com.garden.enums.AlertType;
+import com.garden.enums.PlantStatus;
 import com.garden.interfaces.AlertStrategy;
 import com.garden.model.Plant;
 import com.garden.model.User;
@@ -7,23 +10,25 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 @Component
 public class FrostRiskStrategy implements AlertStrategy {
 
-    private static final DateTimeFormatter MONTH_DAY =
-            DateTimeFormatter.ofPattern("MMM d", Locale.US);
+    private static final DateTimeFormatter MONTH_DAY = DateTimeFormatter.ofPattern("MMM d", Locale.US);
 
     @Override
     public List<AlertResult> evaluate(AlertContext ctx) {
-        User user = ctx.getUser();
+        User user = ctx.user();
         LocalDate today = LocalDate.now();
         LocalDate lastFrost  = user.getLastSpringFrost().atYear(today.getYear());
         LocalDate firstFrost = user.getFirstFallFrost().atYear(today.getYear());
         List<AlertResult> results = new ArrayList<>();
 
-        for (Plant plant : ctx.getPlants()) {
+        for (Plant plant : ctx.plants()) {
             if (plant.getStatus() != PlantStatus.GROWING || !plant.isFrostTender()) continue;
 
             if (!today.isAfter(lastFrost)) {

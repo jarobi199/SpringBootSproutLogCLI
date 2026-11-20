@@ -1,10 +1,19 @@
 package com.garden.alert;
 
+import com.garden.enums.AlertSeverity;
+import com.garden.enums.AlertType;
+import com.garden.enums.PlantStatus;
+import com.garden.interfaces.AlertStrategy;
+import com.garden.model.Plant;
+import com.garden.model.PlantingWindow;
+import com.garden.model.Species;
 import com.garden.model.User;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 @Component
@@ -15,11 +24,11 @@ public class PlantingWindowAlertStrategy implements AlertStrategy {
 
     @Override
     public List<AlertResult> evaluate(AlertContext ctx) {
-        User user = ctx.getUser();
+        User user = ctx.user();
         LocalDate today = LocalDate.now();
         List<AlertResult> results = new ArrayList<>();
 
-        for (Plant plant : ctx.getPlants()) {
+        for (Plant plant : ctx.plants()) {
             if (plant.getStatus() != PlantStatus.PLANNED) continue;
 
             Species species = ctx.speciesFor(plant);
