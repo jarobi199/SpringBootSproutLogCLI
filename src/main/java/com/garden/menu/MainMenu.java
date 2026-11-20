@@ -21,6 +21,8 @@ public class MainMenu implements IMenu {
     @Autowired
     private HarvestMenu harvestMenu;
     @Autowired
+    private AlertsMenu alertsMenu;
+    @Autowired
     private GoodbyeMenu goodbyeMenu;
 
     public void show() {
@@ -43,7 +45,8 @@ public class MainMenu implements IMenu {
                     case 2 -> plantsMenu;
                     case 3 -> speciesMenu;
                     case 5 -> harvestMenu;
-                    case 7 -> settingsMenu;
+                    case 7 -> alertsMenu;
+                    case 8 -> settingsMenu;
                     case 0 -> goodbyeMenu;
                     default -> throw new IllegalStateException("Unexpected value: " + choice);
                 };
