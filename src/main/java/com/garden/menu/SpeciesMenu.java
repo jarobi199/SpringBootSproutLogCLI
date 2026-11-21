@@ -25,10 +25,15 @@ public class SpeciesMenu implements IMenu {
             printOptions();
             choice = InputHandler.getIntegerInput();
             switch (choice) {
+                case 1 -> listSpecies();
                 case 2 -> addSpecies();
             }
         }
         while (choice != 0);
+    }
+
+    public void listSpecies() {
+        speciesService.listSpecies();
     }
 
     public void addSpecies() {

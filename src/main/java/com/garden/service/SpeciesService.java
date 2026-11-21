@@ -8,6 +8,9 @@ import com.garden.factory.SpeciesFactory;
 import com.garden.model.Range;
 import com.garden.model.Species;
 import com.garden.repository.SpeciesRepository;
+import io.github.kusoroadeolu.clique.Clique;
+import io.github.kusoroadeolu.clique.components.Table;
+import io.github.kusoroadeolu.clique.configuration.TableType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,4 +31,27 @@ public class SpeciesService {
         speciesRepository.save(species);
     }
 
+    public void listSpecies() {
+        List<Species> speciesList = speciesRepository.findByUserId(SessionContext.getUser().getId()); //TODO: Sort
+        if (!speciesList.isEmpty()) {
+            System.out.println("| SPECIES |");
+            Table speciesTable = Clique.table(TableType.BOX_DRAW)
+                    .headers(
+                            "[blue, bold]NAME[/]",
+                            "[blue, bold]CATEGORY[/]",
+                            "[blue, bold]SUN NEED[/]",
+                            "[blue, bold]DAYS TO MATURITY[/]",
+                            "[blue, bold]WATERING INTERVAL[/]",
+                            "[blue, bold]WINDO OFFSETS[/]",
+                            "[blue, bold]EXPECTED YIELD[/]"
+                    );
+            speciesList.forEach(species -> {
+                speciesTable.row(species.getName(), species.getCategory().name(), species.getSunNeed().name(),
+                        String.valueOf(species.getDaysToMaturity()), String.valueOf(species.getWateringIntervalDays()), species.getWindowOffsets().toString(), species.getExpectedYield().toString());
+            });
+            speciesTable.render();
+            System.out.println();
+        }
+    }
 }
+
