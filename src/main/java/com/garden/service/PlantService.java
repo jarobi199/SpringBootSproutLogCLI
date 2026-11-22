@@ -1,5 +1,6 @@
 package com.garden.service;
 
+import com.garden.alert.AlertManager;
 import com.garden.authentication.SessionContext;
 import com.garden.enums.PlantStatus;
 import com.garden.model.*;
@@ -33,6 +34,8 @@ public class PlantService {
     private TaskService taskService;
 
     public void addPlant(Bed bed, Species species, String name, int squareFeet, LocalDate plantingDate) {
+        //Warnings
+        warnIfCrowded(bed, squareFeet);
 
         Plant plant = new Plant(SessionContext.getUser().getId(), bed.getId(), species.getId(), species.getName(), name,
                 PlantStatus.PLANNED, plantingDate, squareFeet, plantingDate,
@@ -151,4 +154,15 @@ public class PlantService {
         return (harvestCount == 0) &&  (taskCount == 0);
     }
 
+    public void warnIfCrowded(Bed bed, int squareFeet) {
+        if(isCrowded(bed, squareFeet)) {
+            System.out.println(AlertManager.showWarning("This bed is getting crowded! Less than 10% of the square feet is available."));
+        }
+    }
+
+    public boolean isCrowded(Bed bed, int squareFeet) {
+        return (bedService.squareFeetUsed(bed) + squareFeet) > bed.getAreaSqFt();
+    }
 }
+
+

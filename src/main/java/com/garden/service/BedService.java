@@ -2,6 +2,7 @@ package com.garden.service;
 
 import com.garden.authentication.SessionContext;
 import com.garden.enums.BedType;
+import com.garden.enums.PlantStatus;
 import com.garden.enums.Sun;
 import com.garden.model.Bed;
 import com.garden.model.Plant;
@@ -111,19 +112,9 @@ public class BedService {
         return squareFeet > totalUsedSquareFeet;
     }
 
-    public boolean isCrowded(Bed bed, int squareFeet) {
-        int totalUsedSquareFeet = squareFeetUsed(bed);
-        return (((squareFeet + totalUsedSquareFeet) * 100) / bed.getAreaSqFt()) < 10; //Crowded if there is less than 10% space available
-    }
-
     public int squareFeetUsed(Bed bed) {
-        return plantRepository.findByBedId(bed.getId()).stream().mapToInt(Plant::getSquareFeet).sum();
-    }
-
-    public void warnIfCrowded(Bed bed, int squareFeet) {
-        if(isCrowded(bed, squareFeet)) {
-            System.out.println("This bed is getting crowded! Less than 10% of the square feet is available.");
-        }
+        return plantRepository.findByBedId(bed.getId()).stream().filter(plant -> PlantStatus.PLANNED.equals(plant.getStatus()) || PlantStatus.GROWING.equals(plant.getStatus()))
+                .mapToInt(Plant::getSquareFeet).sum();
     }
 
 }
