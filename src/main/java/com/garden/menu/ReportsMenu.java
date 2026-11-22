@@ -18,10 +18,14 @@ public class ReportsMenu implements IMenu {
             printOptions();
             choice = InputHandler.getIntegerInput();
             switch (choice) {
-
+                case 1 ->  plantNow();
             }
         }
         while (choice != 0);
+    }
+
+    public void plantNow() {
+        reportService.plantNow();
     }
 
     public void printOptions() {
