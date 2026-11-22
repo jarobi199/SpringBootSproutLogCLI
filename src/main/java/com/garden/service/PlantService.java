@@ -3,6 +3,7 @@ package com.garden.service;
 import com.garden.alert.AlertManager;
 import com.garden.authentication.SessionContext;
 import com.garden.enums.PlantStatus;
+import com.garden.enums.Sun;
 import com.garden.model.*;
 import com.garden.repository.BedRepository;
 import com.garden.repository.HarvestRepository;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -34,18 +36,17 @@ public class PlantService {
     private TaskService taskService;
 
     public void addPlant(Bed bed, Species species, String name, int squareFeet, LocalDate plantingDate) {
-        //Warnings
+
+        //Warnings and validations
+        validate(SessionContext.getUser(), bed, species, name, squareFeet, plantingDate);
         warnIfCrowded(bed, squareFeet);
+        warnIfSunMismatch(bed, species.getSunNeed());
 
         Plant plant = new Plant(SessionContext.getUser().getId(), bed.getId(), species.getId(), species.getName(), name,
                 PlantStatus.PLANNED, plantingDate, squareFeet, plantingDate,
                 species.getDaysToMaturity(), species.getWateringIntervalDays(), species.isFrostTender(),
                 species.getExpectedYield(), species.getYieldUnit(), species.getSunNeed());
         plantRepository.save(plant);
-    }
-
-    public List<Plant> findPlantsByBedId(String bedId) {
-        return plantRepository.findByBedId(bedId);
     }
 
     public void listPlants() {
@@ -154,15 +155,51 @@ public class PlantService {
         return (harvestCount == 0) &&  (taskCount == 0);
     }
 
-    public void warnIfCrowded(Bed bed, int squareFeet) {
+    private void warnIfCrowded(Bed bed, int squareFeet) {
         if(isCrowded(bed, squareFeet)) {
             System.out.println(AlertManager.showWarning("This bed is getting crowded! Less than 10% of the square feet is available."));
         }
     }
 
-    public boolean isCrowded(Bed bed, int squareFeet) {
+    private boolean isCrowded(Bed bed, int squareFeet) {
         return (bedService.squareFeetUsed(bed) + squareFeet) > bed.getAreaSqFt();
     }
+
+    private void warnIfSunMismatch(Bed bed, Sun sunNeed) {
+        if(!bed.getSunExposure().equals(sunNeed)) {
+            System.out.println(AlertManager.showWarning("There is a sun exposure mismatch between the bed and the species!"));
+        }
+    }
+
+    private void validate(User user, Bed bed, Species species, String name, int squareFeet, LocalDate plantingDate) {
+
+        Objects.requireNonNull(bed, "bed");
+        Objects.requireNonNull(species, "species");
+        Objects.requireNonNull(plantingDate, "plantingDate");
+
+        // Free-text fields non-blank
+        if (name == null || name.isBlank()) {
+            System.out.println(AlertManager.showWarning("Plant name cannot be blank!"));
+        }
+
+        // Names unique per user within the plants collection
+        String trimmed = name.trim();
+        boolean duplicate = plantRepository.findByUserId(user.getId()).stream().anyMatch(p -> p.getName().equalsIgnoreCase(trimmed));
+        if (duplicate) {
+            System.out.println(AlertManager.showWarning("You already have a plant named \"" + trimmed + "\"."));
+        }
+
+        // Plant square feet >= 1
+        if (squareFeet < 1) {
+            System.out.println(AlertManager.showWarning("Square feet must be at least 1."));
+        }
+
+        // Adding a plant requires species.isHardyIn(hardinessZone)
+        if (!species.isHardyIn(user.getHardinessZone())) {
+            System.out.println(AlertManager.showWarning(species.getName() + " cannot survive in your zone (" + user.getHardinessZone() + ")."));
+        }
+    }
+
 }
 
 
