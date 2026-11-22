@@ -5,8 +5,11 @@ import com.garden.enums.SpeciesCategory;
 import com.garden.enums.Sun;
 import com.garden.enums.YieldUnit;
 import com.garden.factory.SpeciesFactory;
+import com.garden.model.PlantingWindow;
 import com.garden.model.Range;
 import com.garden.model.Species;
+import com.garden.model.User;
+import com.garden.repository.PlantRepository;
 import com.garden.repository.SpeciesRepository;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.components.Table;
@@ -14,12 +17,15 @@ import io.github.kusoroadeolu.clique.configuration.TableType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class SpeciesService {
     @Autowired
     private SpeciesRepository speciesRepository;
+    @Autowired
+    private PlantRepository plantRepository;
 
     public List<Species> getAllSpecies() {
         return speciesRepository.findByUserId(SessionContext.getUser().getId());
@@ -52,6 +58,31 @@ public class SpeciesService {
             speciesTable.render();
             System.out.println();
         }
+    }
+
+    public void viewSpeciesDetail(Species species) {
+        int totalPlants = plantRepository.findBySpeciesId(species.getId()).size();
+
+        System.out.println("| SPECIES DETAIL |");
+        System.out.println(species.getDetails());
+        System.out.println("Planning Window: " + describeWindow(species, SessionContext.getUser()));
+        System.out.println("Total Number Of Plants Using Species: " + totalPlants);
+    }
+
+    private String describeWindow(Species species, User user) {
+        String window = null;
+        int year = LocalDate.now().getYear();
+        PlantingWindow plantingWindow = species.plantingWindow(user, year);
+
+        if (!plantingWindow.isEmpty()) {
+            window = plantingWindow.opens() + " - " + plantingWindow.closes();
+        }
+        else
+        {
+            window = "There is no planting window for this season";
+        }
+
+        return window;
     }
 }
 

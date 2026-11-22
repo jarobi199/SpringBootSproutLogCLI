@@ -27,9 +27,17 @@ public class SpeciesMenu implements IMenu {
             switch (choice) {
                 case 1 -> listSpecies();
                 case 2 -> addSpecies();
+                case 3 -> viewSpeciesDetail();
             }
         }
         while (choice != 0);
+    }
+
+    public void viewSpeciesDetail() {
+        Species species = listSpeciesAndSelect();
+        if (species != null) {
+            speciesService.viewSpeciesDetail(species);
+        }
     }
 
     public void listSpecies() {

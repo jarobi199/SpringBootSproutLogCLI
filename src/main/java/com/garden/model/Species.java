@@ -120,4 +120,18 @@ public abstract class Species {
         return true;
     }
 
+    public String getDetails() {
+        return
+                        "Name: " + name + "\n" +
+                        "Sun need: " + sunNeed + "\n" +
+                        "Days To Maturity: " + daysToMaturity + "\n" +
+                        "Watering Interval Days: " + wateringIntervalDays + "\n" +
+                        "Frost Tender: " + frostTender + "\n" +
+                        "Window Offsets: " + windowOffsets + "\n" +
+                        "Expected Yield: " + expectedYield + "\n" +
+                        "Yield Unit: " + yieldUnit + "\n";
+    }
+
 }
+
+
