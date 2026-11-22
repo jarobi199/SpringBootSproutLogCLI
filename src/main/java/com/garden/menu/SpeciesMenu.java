@@ -28,7 +28,7 @@ public class SpeciesMenu implements IMenu {
                 case 1 -> listSpecies();
                 case 2 -> addSpecies();
                 case 3 -> viewSpeciesDetail();
-                case 5 -> deleteSpecies();
+                case 4 -> deleteSpecies();
             }
         }
         while (choice != 0);
@@ -93,8 +93,7 @@ public class SpeciesMenu implements IMenu {
         System.out.println("[1] List species");
         System.out.println("[2] Add species");
         System.out.println("[3] View species detail");
-        System.out.println("[4] Edit species");
-        System.out.println("[5] Delete species");
+        System.out.println("[4] Delete species");
         System.out.println("[0] Exit");
         System.out.println("Please make a selection:");
     }
