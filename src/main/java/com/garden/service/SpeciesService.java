@@ -84,5 +84,18 @@ public class SpeciesService {
 
         return window;
     }
+
+    public void deleteSpecies(Species species) {
+        int plantCount = plantRepository.findBySpeciesId(species.getId()).size();
+        if (plantCount > 0) {
+            System.out.println("This species cannot be deleted because there are plants that reference it.");
+        }
+        else
+        {
+            speciesRepository.delete(species);
+            System.out.println("The species has been successfully deleted!");
+        }
+
+    }
 }
 

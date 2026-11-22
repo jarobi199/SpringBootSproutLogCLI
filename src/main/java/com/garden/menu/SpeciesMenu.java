@@ -28,9 +28,21 @@ public class SpeciesMenu implements IMenu {
                 case 1 -> listSpecies();
                 case 2 -> addSpecies();
                 case 3 -> viewSpeciesDetail();
+                case 5 -> deleteSpecies();
             }
         }
         while (choice != 0);
+    }
+
+    public void deleteSpecies() {
+        Species species = listSpeciesAndSelect();
+        if (species != null) {
+            System.out.println("Are you sure you want to delete this species (Y/N)?:");
+            boolean confirmDelete = InputHandler.getBooleanInput();
+            if (confirmDelete) {
+                speciesService.deleteSpecies(species);
+            }
+        }
     }
 
     public void viewSpeciesDetail() {
