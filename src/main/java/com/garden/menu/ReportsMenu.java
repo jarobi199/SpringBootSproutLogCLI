@@ -19,10 +19,19 @@ public class ReportsMenu implements IMenu {
             choice = InputHandler.getIntegerInput();
             switch (choice) {
                 case 1 ->  plantNow();
+                case 3 -> yieldSummary();
                 case 4 -> bedUtilization();
             }
         }
         while (choice != 0);
+    }
+
+    public void yieldSummary() {
+        System.out.println("Please enter a year:");
+        int year = InputHandler.getIntegerInput();
+        if(year > 1900) {
+            reportService.yieldSummary(year);
+        }
     }
 
     public void bedUtilization() {

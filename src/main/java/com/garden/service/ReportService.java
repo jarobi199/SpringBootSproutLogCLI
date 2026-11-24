@@ -2,11 +2,9 @@ package com.garden.service;
 
 import com.garden.alert.AlertManager;
 import com.garden.authentication.SessionContext;
-import com.garden.model.Bed;
-import com.garden.model.Plant;
-import com.garden.model.Species;
-import com.garden.model.User;
+import com.garden.model.*;
 import com.garden.repository.BedRepository;
+import com.garden.repository.HarvestRepository;
 import com.garden.repository.PlantRepository;
 import com.garden.repository.SpeciesRepository;
 import io.github.kusoroadeolu.clique.Clique;
@@ -27,7 +25,7 @@ public class ReportService {
     @Autowired
     private SpeciesRepository speciesRepository  ;
     @Autowired
-    private SpeciesService speciesService;
+    private HarvestRepository harvestRepository;
 
     private static final int OPENING_SOON_DAYS = 14;
 
@@ -77,6 +75,30 @@ public class ReportService {
        }
 
         return (!stringBuilder.toString().isEmpty()) ? stringBuilder.toString() : stringBuilder.append("N/A").toString();
+    }
+
+    public void yieldSummary(int year) {
+     List<Plant> plants = plantRepository.findByUserId(SessionContext.getUser().getId());
+     if(!plants.isEmpty()) {
+         System.out.println("| YIELD SUMMARY |");
+         Table yieldTable = Clique.table(TableType.BOX_DRAW)
+                 .headers(
+                         "[blue, bold]NAME[/]",
+                         "[blue, bold]TOTAL[/]",
+                         "[blue, bold]EXPECTED RANGE[/]",
+                         "[blue, bold]RANGE POSITION[/]"
+                 );
+        //TODO: Add code here
+         plants.forEach(plant -> {
+             int totalYield = harvestRepository.findByPlantId(plant.getId()).stream().filter(harvest -> harvest.getDate().getYear() == year).mapToInt(Harvest::getQuantity).sum();
+             Range expectedYield = plant.getExpectedYield();
+             String rangePosition = expectedYield.getPositionDisplay(totalYield);
+         });
+
+         yieldTable.render();
+         System.out.println();
+     }
+
     }
 
 }
