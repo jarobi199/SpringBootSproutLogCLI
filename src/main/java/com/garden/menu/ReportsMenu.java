@@ -19,9 +19,14 @@ public class ReportsMenu implements IMenu {
             choice = InputHandler.getIntegerInput();
             switch (choice) {
                 case 1 ->  plantNow();
+                case 4 -> bedUtilization();
             }
         }
         while (choice != 0);
+    }
+
+    public void bedUtilization() {
+        reportService.bedUtilization();
     }
 
     public void plantNow() {

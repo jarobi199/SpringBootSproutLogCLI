@@ -1,11 +1,17 @@
 package com.garden.service;
 
+import com.garden.alert.AlertManager;
 import com.garden.authentication.SessionContext;
+import com.garden.model.Bed;
+import com.garden.model.Plant;
 import com.garden.model.Species;
 import com.garden.model.User;
 import com.garden.repository.BedRepository;
 import com.garden.repository.PlantRepository;
 import com.garden.repository.SpeciesRepository;
+import io.github.kusoroadeolu.clique.Clique;
+import io.github.kusoroadeolu.clique.components.Table;
+import io.github.kusoroadeolu.clique.configuration.TableType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +29,54 @@ public class ReportService {
     @Autowired
     private SpeciesService speciesService;
 
+    private static final int OPENING_SOON_DAYS = 14;
+
     public void plantNow() {
         User user = SessionContext.getUser();
         LocalDate today = LocalDate.now();
+        LocalDate soon = today.plusDays(OPENING_SOON_DAYS);
+
         List<Species> speciesList = speciesRepository.findByUserId(user.getId()).stream().filter(species -> species.plantingWindow(user, today.getYear()).isOpenOn(today)).toList();
     }
+
+    public void bedUtilization() {
+        List<Bed> bedList = bedRepository.findByUserId(SessionContext.getUser().getId());
+        if (!bedList.isEmpty()) {
+            System.out.println("| BED UTILIZATION |");
+            Table bedTable = Clique.table(TableType.BOX_DRAW)
+                    .headers(
+                            "[blue, bold]BED NAME[/]",
+                            "[blue, bold]SQUARE FEET USED[/]",
+                            "[blue, bold]SQUARE FEET FREE[/]",
+                            "[blue, bold]PERCENT USED[/]",
+                            "[blue, bold]SUN EXPOSURE MISMATCH[/]"
+                    );
+            for (Bed bed : bedList) {
+                int squareFeetUsed = plantRepository.findByBedId(bed.getId()).stream().mapToInt(Plant::getSquareFeet).sum();
+                int squareFeetFree = bed.getAreaSqFt() -  squareFeetUsed;
+                int percentUsed = (int) Math.round(((double) squareFeetUsed / bed.getAreaSqFt()) * 100);
+                String mismatchWarnings = warnIfSunMismatch(bed, plantRepository.findByBedId(bed.getId()));
+                bedTable.row(bed.getName(), String.valueOf(squareFeetUsed),  String.valueOf(squareFeetFree), percentUsed + "%", mismatchWarnings);
+            }
+            bedTable.render();
+            System.out.println();
+        }
+        else
+        {
+            System.out.println(AlertManager.showWarning("There are no beds available."));
+        }
+    }
+
+    private String warnIfSunMismatch(Bed bed, List<Plant> plantList) {
+       StringBuilder stringBuilder = new StringBuilder();
+
+       for (Plant plant : plantList) {
+           if(!bed.getSunExposure().equals(plant.getSunNeed())) {
+               stringBuilder.append(AlertManager.showWarning("There is a sun exposure mismatch between the bed and the species ")).append(plant.getSpeciesName()).append("!").append("\n");
+           }
+       }
+
+        return (!stringBuilder.toString().isEmpty()) ? stringBuilder.toString() : stringBuilder.append("N/A").toString();
+    }
+
 }
