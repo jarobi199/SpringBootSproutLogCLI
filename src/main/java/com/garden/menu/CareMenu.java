@@ -3,7 +3,6 @@ package com.garden.menu;
 import com.garden.enums.PlantStatus;
 import com.garden.enums.TaskType;
 import com.garden.interfaces.IMenu;
-import com.garden.model.Harvest;
 import com.garden.model.Plant;
 import com.garden.model.Task;
 import com.garden.service.TaskService;
@@ -80,7 +79,7 @@ public class CareMenu implements IMenu {
         System.out.println("[1] Log task");
         System.out.println("[2] History by plant");
         System.out.println("[3] Care schedule");
-        System.out.println("[3] Delete task");
+        System.out.println("[4] Delete task");
         System.out.println("[0] Exit");
         System.out.println("Please make a selection:");
     }
