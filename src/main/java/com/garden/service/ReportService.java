@@ -93,6 +93,7 @@ public class ReportService {
              int totalYield = harvestRepository.findByPlantId(plant.getId()).stream().filter(harvest -> harvest.getDate().getYear() == year).mapToInt(Harvest::getQuantity).sum();
              Range expectedYield = plant.getExpectedYield();
              String rangePosition = expectedYield.getPositionDisplay(totalYield);
+             yieldTable.row(plant.getName(), String.valueOf(totalYield), expectedYield.toString(), rangePosition);
          });
 
          yieldTable.render();
