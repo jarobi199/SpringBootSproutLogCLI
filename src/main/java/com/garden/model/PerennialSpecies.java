@@ -43,4 +43,9 @@ public class PerennialSpecies extends Species {
     public PlantingWindow plantingWindow(User user, int year) {
         return plantingWindowStrategy.window(this, user, year);
     }
+
+    @Override
+    public String getDetails() {
+        return super.getDetails() + "Minimum Zone: " + minZone + "\n";
+    }
 }

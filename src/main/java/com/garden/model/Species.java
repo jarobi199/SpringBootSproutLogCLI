@@ -122,7 +122,8 @@ public abstract class Species {
 
     public String getDetails() {
         return
-                        "Name: " + name + "\n" +
+                "Name: " + name + "\n" +
+                        "Category: " + getCategory() + "\n" +
                         "Sun need: " + sunNeed + "\n" +
                         "Days To Maturity: " + daysToMaturity + "\n" +
                         "Watering Interval Days: " + wateringIntervalDays + "\n" +
