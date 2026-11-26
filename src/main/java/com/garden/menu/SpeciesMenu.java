@@ -116,7 +116,7 @@ public class SpeciesMenu implements IMenu {
         }
         else
         {
-            System.out.println("There are no beds available.");
+            System.out.println("There are no species available.");
         }
 
         return species;
