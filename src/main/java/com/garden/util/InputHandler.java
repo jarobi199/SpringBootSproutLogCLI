@@ -91,17 +91,6 @@ public class InputHandler {
         }
     }
 
-    public static double getDoubleInput() {
-        while (true) {
-            String line = nextLine();
-            try {
-                return Double.parseDouble(line);
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number:");
-            }
-        }
-    }
-
     public static LocalDate getDateInput() {
         while (true) {
             String line = nextLine();
@@ -126,10 +115,6 @@ public class InputHandler {
                 System.err.println("[InputHandler] Error closing debug reader: " + e.getMessage());
             }
         }
-    }
-
-    public static String formatAsMoney(double value) {
-        return defaultFormat.format(value);
     }
 
     // ----------------------------------------------------------------
