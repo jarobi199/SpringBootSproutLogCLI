@@ -6,6 +6,7 @@ import com.garden.enums.PlantStatus;
 import com.garden.enums.Sun;
 import com.garden.model.Bed;
 import com.garden.model.Plant;
+import com.garden.model.User;
 import com.garden.repository.BedRepository;
 import com.garden.repository.PlantRepository;
 import io.github.kusoroadeolu.clique.Clique;
@@ -108,13 +109,17 @@ public class BedService {
     }
 
     public boolean isSquareFeetAvailable(Bed bed, int squareFeet) {
-        int totalUsedSquareFeet = squareFeetUsed(bed);
-        return squareFeet > totalUsedSquareFeet;
+        int totalSquareFeetFree = bed.getAreaSqFt() - squareFeetUsed(bed);
+        return squareFeet >= totalSquareFeetFree;
     }
 
     public int squareFeetUsed(Bed bed) {
         return plantRepository.findByBedId(bed.getId()).stream().filter(plant -> PlantStatus.PLANNED.equals(plant.getStatus()) || PlantStatus.GROWING.equals(plant.getStatus()))
                 .mapToInt(Plant::getSquareFeet).sum();
+    }
+
+    public void deleteAllByUser(User user) {
+        bedRepository.deleteByUserId(user.getId());
     }
 
 }

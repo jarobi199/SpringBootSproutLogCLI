@@ -10,10 +10,10 @@ import org.springframework.data.annotation.Transient;
 public class PerennialSpecies extends Species {
     private int minZone;
     @Transient
-    private PlantingWindowStrategy<PerennialSpecies> plantingWindowStrategy;
+    private final PlantingWindowStrategy<PerennialSpecies> plantingWindowStrategy = new PerennialWindowStrategy();
 
     public PerennialSpecies() {
-        this.plantingWindowStrategy = new PerennialWindowStrategy();
+        //No argument constructor
     }
 
     public PerennialSpecies(String userId, String name, Sun sunNeed, int daysToMaturity, int wateringIntervalDays, boolean frostTender, Range windowOffsets, Range expectedYield, YieldUnit yieldUnit, int minZone) {

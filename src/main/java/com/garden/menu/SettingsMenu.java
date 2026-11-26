@@ -4,6 +4,7 @@ import com.garden.authentication.SessionContext;
 import com.garden.enums.Role;
 import com.garden.interfaces.IMenu;
 import com.garden.model.SeasonDay;
+import com.garden.service.BedService;
 import com.garden.service.UserService;
 import com.garden.util.InputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import java.util.List;
 public class SettingsMenu implements IMenu {
     @Autowired
     private UserService userService;
+    @Autowired
+    private BedService bedService;
 
     @Override
     public void show() {
@@ -89,25 +92,27 @@ public class SettingsMenu implements IMenu {
     }
 
     public void createUser() {
-        System.out.println("Enter the full name:");
-        String fullName = InputHandler.getStringInput();
-        System.out.println("Enter the username:");
-        String username = InputHandler.getStringInput();
-        System.out.println("Enter the password:");
-        String password = InputHandler.getStringInput();
-        System.out.println("Enter the role (ADMINISTRATOR, USER):");
-        Role role = Role.valueOf(InputHandler.getStringInput().toUpperCase());
-        System.out.println("Enter the hardiness zone value:");
-        int hardinessZone = InputHandler.getIntegerInput();
-        System.out.println("Enter the last spring frost as a month and day separated by a comma (example: 5,10):");
-        List<String> lastSpringInputs = List.of(InputHandler.getStringInput().split(","));
-        SeasonDay lastSpringFrost = new SeasonDay(Integer.parseInt(lastSpringInputs.getFirst()), Integer.parseInt(lastSpringInputs.get(1)));
-        System.out.println("Enter the first fall frost as a month and day separated by a comma (example: 5,10):");
-        List<String> firstFallInputs = List.of(InputHandler.getStringInput().split(","));
-        SeasonDay firstFallFrost = new SeasonDay(Integer.parseInt(firstFallInputs.getFirst()), Integer.parseInt(firstFallInputs.get(1))) ;
+        if(verifyAdmin()) {
+            System.out.println("Enter the full name:");
+            String fullName = InputHandler.getStringInput();
+            System.out.println("Enter the username:");
+            String username = InputHandler.getStringInput();
+            System.out.println("Enter the password:");
+            String password = InputHandler.getStringInput();
+            System.out.println("Enter the role (ADMINISTRATOR, USER):");
+            Role role = Role.valueOf(InputHandler.getStringInput().toUpperCase());
+            System.out.println("Enter the hardiness zone value:");
+            int hardinessZone = InputHandler.getIntegerInput();
+            System.out.println("Enter the last spring frost as a month and day separated by a comma (example: 5,10):");
+            List<String> lastSpringInputs = List.of(InputHandler.getStringInput().split(","));
+            SeasonDay lastSpringFrost = new SeasonDay(Integer.parseInt(lastSpringInputs.getFirst()), Integer.parseInt(lastSpringInputs.get(1)));
+            System.out.println("Enter the first fall frost as a month and day separated by a comma (example: 5,10):");
+            List<String> firstFallInputs = List.of(InputHandler.getStringInput().split(","));
+            SeasonDay firstFallFrost = new SeasonDay(Integer.parseInt(firstFallInputs.getFirst()), Integer.parseInt(firstFallInputs.get(1))) ;
 
-        userService.register(fullName, username, password, role, hardinessZone, lastSpringFrost, firstFallFrost, 1, 5, 7);
-        System.out.println("Your new user has been created!");
+            userService.register(fullName, username, password, role, hardinessZone, lastSpringFrost, firstFallFrost, 1, 5, 7);
+            System.out.println("Your new user has been created!");
+        }
     }
 
     public void deleteUser() {

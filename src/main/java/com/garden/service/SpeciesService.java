@@ -48,7 +48,7 @@ public class SpeciesService {
                             "[blue, bold]SUN NEED[/]",
                             "[blue, bold]DAYS TO MATURITY[/]",
                             "[blue, bold]WATERING INTERVAL[/]",
-                            "[blue, bold]WINDO OFFSETS[/]",
+                            "[blue, bold]WINDOW OFFSETS[/]",
                             "[blue, bold]EXPECTED YIELD[/]"
                     );
             speciesList.forEach(species -> {

@@ -37,16 +37,16 @@ public class PlantService {
 
     public void addPlant(Bed bed, Species species, String name, int squareFeet, LocalDate plantingDate) {
 
-        //Warnings and validations
-        validate(SessionContext.getUser(), bed, species, name, squareFeet, plantingDate);
-        warnIfCrowded(bed, squareFeet);
-        warnIfSunMismatch(bed, species.getSunNeed());
+        if(validate(SessionContext.getUser(), bed, species, name, squareFeet, plantingDate)) {
+            warnIfCrowded(bed, squareFeet);
+            warnIfSunMismatch(bed, species.getSunNeed());
 
-        Plant plant = new Plant(SessionContext.getUser().getId(), bed.getId(), species.getId(), species.getName(), name,
-                PlantStatus.PLANNED, plantingDate, squareFeet, plantingDate,
-                species.getDaysToMaturity(), species.getWateringIntervalDays(), species.isFrostTender(),
-                species.getExpectedYield(), species.getYieldUnit(), species.getSunNeed());
-        plantRepository.save(plant);
+            Plant plant = new Plant(SessionContext.getUser().getId(), bed.getId(), species.getId(), species.getName(), name,
+                    PlantStatus.PLANNED, plantingDate, squareFeet, plantingDate,
+                    species.getDaysToMaturity(), species.getWateringIntervalDays(), species.isFrostTender(),
+                    species.getExpectedYield(), species.getYieldUnit(), species.getSunNeed());
+            plantRepository.save(plant);
+        }
     }
 
     public void listPlants() {
@@ -63,7 +63,7 @@ public class PlantService {
                     );
             plants.forEach(plant -> {
                 Optional<Bed> optionalBed = bedRepository.findById(plant.getBedId());
-                plantTable.row(plant.getName(), plant.getSpeciesName(), optionalBed.isPresent() ? optionalBed.get().getName() : "N/A", plant.getStatus().name(), String.valueOf(plant.getSquareFeet()));
+                plantTable.row(plant.getName(), plant.getSpeciesName(), optionalBed.isPresent() ? optionalBed.get().getName() : "N/A", plant.getPlantingDate().toString(), String.valueOf(plant.getSquareFeet()));
                     });
             plantTable.render();
             System.out.println();
@@ -94,14 +94,10 @@ public class PlantService {
     }
 
     public void movePlant(Plant plant, Bed bed) {
-        if(bedService.isSquareFeetAvailable(bed, plant.getSquareFeet())) {
-            plant.setBedId(bed.getId());
-            plantRepository.save(plant);
-            System.out.println("This plant has been successfully moved to " + bed.getName() + ".");
-        }
-        else {
-            System.out.println("This plant could not be moved to " + bed.getName() + " because there is not enough room.");
-        }
+        warnIfCrowded(bed, plant.getSquareFeet());
+        plant.setBedId(bed.getId());
+        plantRepository.save(plant);
+        System.out.println("This plant has been successfully moved to " + bed.getName() + ".");
     }
 
     public void viewPlantDetail(Plant plant) {
@@ -157,7 +153,7 @@ public class PlantService {
 
     private void warnIfCrowded(Bed bed, int squareFeet) {
         if(isCrowded(bed, squareFeet)) {
-            System.out.println(AlertManager.showWarning("This bed is getting crowded! Less than 10% of the square feet is available."));
+            System.out.println(AlertManager.showWarning("This bed will be over capacity!"));
         }
     }
 
@@ -171,7 +167,8 @@ public class PlantService {
         }
     }
 
-    private void validate(User user, Bed bed, Species species, String name, int squareFeet, LocalDate plantingDate) {
+    private boolean validate(User user, Bed bed, Species species, String name, int squareFeet, LocalDate plantingDate) {
+        boolean result = true;
 
         Objects.requireNonNull(bed, "bed");
         Objects.requireNonNull(species, "species");
@@ -179,6 +176,7 @@ public class PlantService {
 
         // Free-text fields non-blank
         if (name == null || name.isBlank()) {
+            result = false;
             System.out.println(AlertManager.showWarning("Plant name cannot be blank!"));
         }
 
@@ -186,18 +184,23 @@ public class PlantService {
         String trimmed = name.trim();
         boolean duplicate = plantRepository.findByUserId(user.getId()).stream().anyMatch(p -> p.getName().equalsIgnoreCase(trimmed));
         if (duplicate) {
+            result = false;
             System.out.println(AlertManager.showWarning("You already have a plant named \"" + trimmed + "\"."));
         }
 
         // Plant square feet >= 1
         if (squareFeet < 1) {
+            result = false;
             System.out.println(AlertManager.showWarning("Square feet must be at least 1."));
         }
 
         // Adding a plant requires species.isHardyIn(hardinessZone)
         if (!species.isHardyIn(user.getHardinessZone())) {
+            result = false;
             System.out.println(AlertManager.showWarning(species.getName() + " cannot survive in your zone (" + user.getHardinessZone() + ")."));
         }
+
+        return result;
     }
 
 }

@@ -1,9 +1,7 @@
 package com.garden.authentication;
 
 import com.garden.model.User;
-import org.springframework.stereotype.Component;
 
-@Component
 public class SessionContext {
 
     private static User currentUser;

@@ -25,7 +25,7 @@ public class HarvestService {
 
     public void logHarvest(Plant plant, LocalDate harvestDate, int quantity, String notes) {
         Bed bed = bedRepository.findById(plant.getBedId()).orElse(null);
-        Harvest harvest = new Harvest(SessionContext.getUser().getId(), plant.getId(), plant.getName(), (bed != null) ? bed.getId() : "", plant.getSpeciesName(), harvestDate, quantity, plant.getYieldUnit(), notes);
+        Harvest harvest = new Harvest(SessionContext.getUser().getId(), plant.getId(), plant.getName(), (bed != null) ? bed.getName() : "", plant.getSpeciesName(), harvestDate, quantity, plant.getYieldUnit(), notes);
         harvestRepository.save(harvest);
     }
 

@@ -29,7 +29,7 @@ public class WateringDueStrategy implements AlertStrategy {
             if (plant.getStatus().equals(PlantStatus.GROWING)) {
                 LocalDate due = plant.getLastWatered().plusDays(plant.getWateringIntervalDays());
                 long daysUntilDue = ChronoUnit.DAYS.between(today, due);
-                if (daysUntilDue < leadDays) {
+                if (daysUntilDue <= leadDays) {
                     long overdue = -daysUntilDue;
                     AlertSeverity severity = (daysUntilDue < 0 && overdue >= criticalOverdueDays)
                             ? AlertSeverity.CRITICAL : AlertSeverity.WARNING;

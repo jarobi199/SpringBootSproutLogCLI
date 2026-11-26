@@ -67,7 +67,7 @@ public class TaskService {
 
     public void displayCareSchedule() {
         List<Plant> plants = plantRepository.findByUserIdAndStatus(SessionContext.getUser().getId(), PlantStatus.GROWING)
-                .stream().sorted(Comparator.comparing(Plant::getLastWatered)).toList();
+                .stream().sorted(Comparator.comparing(Plant::getNextWateringDate)).toList();
         if(!plants.isEmpty()) {
             System.out.println("| CARE SCHEDULE |");
             Table plantTable = Clique.table(TableType.BOX_DRAW)
@@ -84,10 +84,6 @@ public class TaskService {
                 plantTable.row(plant.getName(), plant.getSpeciesName(),
                         plant.getNextWateringDate().toString(), daysUntilDueString);
             });
-
-            plants.forEach(plant -> plantTable.row(plant.getName(), plant.getSpeciesName(),
-                    plant.getNextWateringDate().toString(), ""));
-            plantTable.render();
         }
 
     }

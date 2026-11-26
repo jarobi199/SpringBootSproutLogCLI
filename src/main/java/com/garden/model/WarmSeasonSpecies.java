@@ -10,10 +10,10 @@ import org.springframework.data.annotation.Transient;
 public class WarmSeasonSpecies extends Species {
 
     @Transient
-    private PlantingWindowStrategy<WarmSeasonSpecies> plantingWindowStrategy;
+    private final PlantingWindowStrategy<WarmSeasonSpecies> plantingWindowStrategy = new WarmSeasonWindowStrategy();
 
     public WarmSeasonSpecies() {
-        this.plantingWindowStrategy = new WarmSeasonWindowStrategy();
+        //No argument constructor
     }
 
     public WarmSeasonSpecies(String userId, String name, Sun sunNeed, int daysToMaturity, int wateringIntervalDays, boolean frostTender, Range windowOffsets, Range expectedYield, YieldUnit yieldUnit) {
