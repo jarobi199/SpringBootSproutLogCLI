@@ -162,7 +162,7 @@ public class PlantService {
     }
 
     private void warnIfSunMismatch(Bed bed, Sun sunNeed) {
-        if(!bed.getSunExposure().equals(sunNeed)) {
+        if( sunNeed.ordinal() > bed.getSunExposure().ordinal()) {
             System.out.println(AlertManager.showWarning("There is a sun exposure mismatch between the bed and the species!"));
         }
     }
