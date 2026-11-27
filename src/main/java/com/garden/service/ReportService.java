@@ -102,4 +102,7 @@ public class ReportService {
 
     }
 
+    public void plantingCalendar(int year) {
+        
+    }
 }
