@@ -3,8 +3,12 @@ package com.garden.model;
 import com.garden.enums.SpeciesCategory;
 import com.garden.enums.Sun;
 import com.garden.enums.YieldUnit;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "species")
 public abstract class Species {
+    @Id
     private String id;
     private String userId;
     private String name;
