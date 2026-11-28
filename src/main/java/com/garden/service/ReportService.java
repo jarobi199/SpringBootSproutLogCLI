@@ -113,31 +113,32 @@ public class ReportService {
     }
 
     public void yieldSummary(int year) {
-     List<Plant> plants = plantRepository.findByUserId(SessionContext.getUser().getId());
-     if(!plants.isEmpty()) {
-         System.out.println("| YIELD SUMMARY |");
-         Table yieldTable = Clique.table(TableType.BOX_DRAW)
-                 .headers(
-                         "[blue, bold]NAME[/]",
-                         "[blue, bold]TOTAL[/]",
-                         "[blue, bold]EXPECTED RANGE[/]",
-                         "[blue, bold]RANGE POSITION[/]"
-                 );
-        //TODO: Add code here
-         plants.forEach(plant -> {
-             int totalYield = harvestRepository.findByPlantId(plant.getId()).stream().filter(harvest -> harvest.getDate().getYear() == year).mapToInt(Harvest::getQuantity).sum();
-             Range expectedYield = plant.getExpectedYield();
-             String rangePosition = expectedYield.getPositionDisplay(totalYield);
-             yieldTable.row(plant.getName(), String.valueOf(totalYield), expectedYield.toString(), rangePosition);
-         });
+        List<Plant> plants = plantRepository.findByUserId(SessionContext.getUser().getId());
+        if (!plants.isEmpty()) {
+            System.out.println("| YIELD SUMMARY |");
+            Table yieldTable = Clique.table(TableType.BOX_DRAW)
+                    .headers(
+                            "[blue, bold]NAME[/]",
+                            "[blue, bold]TOTAL[/]",
+                            "[blue, bold]EXPECTED RANGE[/]",
+                            "[blue, bold]RANGE POSITION[/]"
+                    );
+            //TODO: Add code here
+            plants.forEach(plant -> {
+                int totalYield = harvestRepository.findByPlantId(plant.getId()).stream().filter(harvest -> harvest.getDate().getYear() == year).mapToInt(Harvest::getQuantity).sum();
+                Range expectedYield = plant.getExpectedYield();
+                String rangePosition = expectedYield.getPositionDisplay(totalYield);
+                yieldTable.row(plant.getName(), String.valueOf(totalYield), expectedYield.toString(), rangePosition);
+            });
 
-         yieldTable.render();
-         System.out.println();
-     }
-
+            yieldTable.render();
+            System.out.println();
+        }
     }
 
     public void plantingCalendar(int year) {
-        
+        User user = SessionContext.getUser();
+        List<Species> speciesList = speciesRepository.findByUserId(user.getId())
+                .stream().sorted(Comparator.comparing(s -> s.plantingWindow(user, year).opens())).toList();
     }
 }
