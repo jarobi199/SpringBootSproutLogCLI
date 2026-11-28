@@ -18,7 +18,7 @@ public class ReportsMenu implements IMenu {
             printOptions();
             choice = InputHandler.getIntegerInput();
             switch (choice) {
-                case 1 ->  plantNow();
+                case 1 -> plantNow();
                 case 2 -> plantingCalendar();
                 case 3 -> yieldSummary();
                 case 4 -> bedUtilization();

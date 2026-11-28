@@ -140,5 +140,22 @@ public class ReportService {
         User user = SessionContext.getUser();
         List<Species> speciesList = speciesRepository.findByUserId(user.getId())
                 .stream().sorted(Comparator.comparing(s -> s.plantingWindow(user, year).opens())).toList();
+
+        if(!speciesList.isEmpty()) {
+            System.out.println("| PLANTING CALENDAR |");
+
+            Table plantingCalendarTable = Clique.table(TableType.BOX_DRAW)
+                    .headers(
+                            "[blue, bold]NAME[/]",
+                            "[blue, bold]OPEN DATE[/]",
+                            "[blue, bold]CLOSING DATE[/]"
+                    );
+            speciesList.forEach(species -> {
+                PlantingWindow plantingWindow = species.plantingWindow(user, year);
+                plantingCalendarTable.row(species.getName(), plantingWindow.opens().toString(), plantingWindow.closes().toString());
+            });
+            plantingCalendarTable.render();
+        }
     }
+
 }
