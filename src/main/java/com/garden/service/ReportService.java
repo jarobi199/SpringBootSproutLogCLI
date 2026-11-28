@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -33,8 +35,41 @@ public class ReportService {
         User user = SessionContext.getUser();
         LocalDate today = LocalDate.now();
         LocalDate soon = today.plusDays(OPENING_SOON_DAYS);
+        List<PlantableNow> results = new ArrayList<>();
 
-        List<Species> speciesList = speciesRepository.findByUserId(user.getId()).stream().filter(species -> species.plantingWindow(user, today.getYear()).isOpenOn(today)).toList();
+        for (Species species : speciesRepository.findByUserId(user.getId())) {
+            if (species.isHardyIn(user.getHardinessZone())) {
+                PlantingWindow window = species.plantingWindow(user, today.getYear());
+                if (!window.isEmpty()) {
+                    if (window.isOpenOn(today)) {
+                        results.add(new PlantableNow(species, window, true));
+                    }
+                    else if (window.opens().isAfter(today) && !window.opens().isAfter(soon)) {
+                        results.add(new PlantableNow(species, window, false));      // opens within 14 days
+                    }
+                }
+
+                // Open now first (closing soonest first), then opening soon (opening soonest first).
+                results.sort(Comparator
+                        .comparing((PlantableNow r) -> !r.openNow())
+                        .thenComparing(r -> r.openNow() ? r.window().closes() : r.window().opens()));
+            }
+        }
+
+        if (!results.isEmpty()) {
+            Table plantingTable = Clique.table(TableType.BOX_DRAW)
+                    .headers(
+                            "[blue, bold]SPECIES[/]",
+                            "[blue, bold]OPEN DATE[/]",
+                            "[blue, bold]CLOSE DAYE[/]",
+                            "[blue, bold]NOTES[/]"
+                    );
+            for (PlantableNow plantableNow : results) {
+                String notes = (plantableNow.openNow() ? "N/A" : "Planting window is opening in 14 days.");
+                plantingTable.row(plantableNow.species().getName(), plantableNow.window().opens().toString(), plantableNow.window().closes().toString(), notes);
+            }
+            plantingTable.render();
+        }
     }
 
     public void bedUtilization() {
